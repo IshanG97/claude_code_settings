@@ -8,6 +8,9 @@ Simple Claude Code configuration setup for Python, JavaScript, and C# developmen
 git clone <repository-url> claude_code_settings
 cd claude_code_settings
 
+# Install global settings
+./setup-global.sh
+
 # Setup for a Python project
 ./setup.sh ~/code/my-python-project python
 
