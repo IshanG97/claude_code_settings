@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allowFileAccess": true,
+    "allowNetworkAccess": true,
+    "allowShellAccess": true
+  },
+  "preferences": {
+    "autoSave": true,
+    "showLineNumbers": true,
+    "tabSize": 2,
+    "insertSpaces": true,
+    "wordWrap": true
+  }
+}
