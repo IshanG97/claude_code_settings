@@ -2,8 +2,8 @@
 (but also, a little bit more)
 
 Stuff might be broken, don't hate the player, hate the game.
-Shout out to [Tom Cassar](https://github.com/tcassar/dotfiles) for the configs
-.
+Shout out to [Tom Cassar](https://github.com/tcassar/dotfiles) for the configs.
+
 ## .config files
 Copy to ~
 - Homebrew
