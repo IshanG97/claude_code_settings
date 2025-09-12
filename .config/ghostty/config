@@ -1,0 +1,8 @@
+font-family = "Lekton Nerd Font" -calt -liga -dlig
+font-size = 18
+
+macos-titlebar-style = hidden
+maximize = true
+macos-non-native-fullscreen = visible-menu
+
+theme = Belafonte Day

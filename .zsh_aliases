@@ -1,0 +1,4 @@
+alias c=clear
+alias vim=nvim
+alias pyac='source ./venv/bin/activate'
+alias exp_env='export $(cat .env | xargs)'
