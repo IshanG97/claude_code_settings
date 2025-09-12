@@ -1,8 +1,23 @@
-# Claude Code Settings Repository
+# .files (but also, a little bit more)
 
-Simple Claude Code configuration setup for Python, JavaScript, and C# development.
+Stuff might be broken, don't hate the player, hate the game.
+Shout out to [https://github.com/tcassar/dotfiles](Tom Cassar) for the configs.
 
-## 🚀 Quick Start
+## .config files
+Copy to ~
+- Homebrew
+- Ghostty
+- tmux
+- tmux plugin manager (press <leader> once installed)
+- neovim (don't use brew mirror, it's old)
+- starship (prompt)
+- a nerd font
+- Karabiner (to remap keys)
+- Rectangle - import via Rectangle > Settings > Import
+
+## claude code setup for Python, JavaScript, and C# development.
+
+### 🚀 quick start
 
 ```bash
 git clone <repository-url> claude_code_settings
@@ -21,7 +36,7 @@ cd claude_code_settings
 ./setup.sh ~/code/my-dotnet-api csharp
 ```
 
-## File Structure After Setup
+### file structure post setup
 ```
 /repo/
 ├── CLAUDE.md              # Language-specific guidelines
