@@ -5,7 +5,7 @@ Stuff might be broken, don't hate the player, hate the game.
 Shout out to [Tom Cassar](https://github.com/tcassar/dotfiles) for the configs.
 
 ## .config files
-Copy to ~
+Copy to `~`
 - Homebrew
 - Ghostty
 - tmux
@@ -16,7 +16,7 @@ Copy to ~
 - Karabiner (to remap keys)
 - Rectangle - import via Rectangle > Settings > Import
 
-## Claude code setup for Python, JavaScript, and C# development.
+## Claude code setup for Python, JavaScript, and C# dev
 ### 🚀 Quick start
 ```bash
 git clone <repository-url> claude_code_settings
