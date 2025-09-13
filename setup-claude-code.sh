@@ -8,9 +8,46 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SETTINGS_DIR="$SCRIPT_DIR"
 
-# Check if required arguments were provided
+# Check if global setup was requested
+if [[ $# -eq 1 && "$1" == "--global" ]]; then
+    echo "🌍 Setting up Global Claude Code configuration..."
+
+    GLOBAL_CLAUDE_DIR="$HOME/.claude"
+    SOURCE_FILE="$SCRIPT_DIR/CLAUDE.md"
+
+    # Validate source file exists
+    if [[ ! -f "$SOURCE_FILE" ]]; then
+        echo "❌ Source file not found: $SOURCE_FILE"
+        exit 1
+    fi
+
+    # Create global .claude directory if it doesn't exist
+    if [[ ! -d "$GLOBAL_CLAUDE_DIR" ]]; then
+        echo "📁 Creating global .claude directory..."
+        mkdir -p "$GLOBAL_CLAUDE_DIR"
+    fi
+
+    # Backup existing global CLAUDE.md if it exists
+    if [[ -f "$GLOBAL_CLAUDE_DIR/CLAUDE.md" ]]; then
+        echo "💾 Backing up existing global CLAUDE.md..."
+        cp "$GLOBAL_CLAUDE_DIR/CLAUDE.md" "$GLOBAL_CLAUDE_DIR/CLAUDE.md.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+
+    # Copy local CLAUDE.md to global location
+    echo "📝 Installing global CLAUDE.md..."
+    cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
+
+    echo ""
+    echo "🎉 Global setup complete!"
+    echo "📋 Installed: $GLOBAL_CLAUDE_DIR/CLAUDE.md"
+    echo "💡 This configuration will apply to all Claude Code sessions"
+    exit 0
+fi
+
+# Check if required arguments were provided for project setup
 if [[ $# -ne 2 ]]; then
     echo "❌ Usage: $0 <project-directory> <language>"
+    echo "   OR: $0 --global"
     echo ""
     echo "Languages: javascript, python, csharp"
     echo ""
@@ -18,6 +55,7 @@ if [[ $# -ne 2 ]]; then
     echo "  $0 /path/to/my-python-project python"
     echo "  $0 ~/code/my-js-app javascript"
     echo "  $0 ./my-dotnet-api csharp"
+    echo "  $0 --global"
     exit 1
 fi
 
