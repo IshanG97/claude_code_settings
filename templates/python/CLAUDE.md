@@ -70,6 +70,27 @@ Use conventional commit prefixes:
 - Validate all external inputs
 - Use parameterized queries to prevent injection
 - Keep dependencies updated
+- Remove secrets from git history using `git-filter-repo` if accidentally committed
+
+### Git History Management with git-filter-repo
+Use `git-filter-repo` for repository history modifications:
+
+```bash
+# Remove sensitive files from history
+git filter-repo --path .env --invert-paths
+
+# Replace API keys across all files and commits
+git filter-repo --replace-text <(echo 'sk-abc123==>sk-xxxxxxxx')
+
+# Update author information
+git filter-repo --mailmap .mailmap
+
+# Standardize commit messages
+git filter-repo --replace-message <(echo 'fix typo==>fix: correct typo')
+
+# Restructure Python package layout
+git filter-repo --path src/ --to-subdirectory-filter mypackage/
+```
 
 ## Error Handling
 - Use specific exception types with meaningful messages

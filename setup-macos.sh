@@ -79,14 +79,14 @@ else
     echo "✅ uv already installed"
 fi
 
-# Install BFG Repo-Cleaner
-echo "🧹 Checking BFG Repo-Cleaner..."
-if ! command -v bfg &>/dev/null; then
-    echo "Installing BFG Repo-Cleaner..."
-    brew install bfg
-    echo "✅ BFG Repo-Cleaner installed"
+# Install git-filter-repo
+echo "🧹 Checking git-filter-repo..."
+if ! command -v git-filter-repo &>/dev/null; then
+    echo "Installing git-filter-repo..."
+    brew install git-filter-repo
+    echo "✅ git-filter-repo installed"
 else
-    echo "✅ BFG Repo-Cleaner already installed"
+    echo "✅ git-filter-repo already installed"
 fi
 
 
@@ -131,7 +131,7 @@ echo "🔍 Current installation status:"
 command -v brew >/dev/null && echo "✅ Homebrew: $(brew --version | head -n1)"
 command -v git >/dev/null && echo "✅ Git: $(git --version)"
 command -v uv >/dev/null && echo "✅ uv: $(uv --version)"
-command -v bfg >/dev/null && echo "✅ BFG Repo-Cleaner: $(bfg --version 2>&1 | head -n1)"
+command -v git-filter-repo >/dev/null && echo "✅ git-filter-repo: $(git-filter-repo --version 2>&1 | head -n1)"
 
 # Check Node/npm (may be installed separately)
 command -v node >/dev/null && echo "✅ Node.js: $(node --version)"

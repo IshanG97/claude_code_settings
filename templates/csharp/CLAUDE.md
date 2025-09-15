@@ -143,8 +143,36 @@ private static void Application_ThreadException(object sender, ThreadExceptionEv
 - Use BeginInvoke/Invoke for cross-thread operations
 - Dispose resources properly with `using` statements
 
+## Security Best Practices
+- Never commit connection strings, API keys, or credentials to source control
+- Use appsettings.json with environment-specific overrides
+- Implement input validation and parameterized queries
+- Keep NuGet packages updated for security patches
+- Remove secrets from git history using `git-filter-repo` if accidentally committed
+
+### Git History Management with git-filter-repo
+Use `git-filter-repo` for repository history modifications:
+
+```bash
+# Remove configuration files with secrets
+git filter-repo --path appsettings.Production.json --invert-paths
+
+# Replace connection strings across all files
+git filter-repo --replace-text <(echo 'Server=prod-server==>Server=xxxxxxxx')
+
+# Update author information for corporate compliance
+git filter-repo --mailmap .mailmap
+
+# Standardize commit messages to conventional format
+git filter-repo --replace-message <(echo 'bug fix==>fix: resolve issue')
+
+# Restructure solution layout
+git filter-repo --path WinFormsApp/ --to-subdirectory-filter src/
+git filter-repo --path Tests/ --to-subdirectory-filter tests/
+```
+
 ## Deployment Options
 - **ClickOnce**: Easy deployment with auto-updates
-- **Self-contained**: Includes .NET runtime  
+- **Self-contained**: Includes .NET runtime
 - **Framework-dependent**: Smaller size, requires runtime
 - **MSI/Setup**: Use WiX or InstallShield for complex installations

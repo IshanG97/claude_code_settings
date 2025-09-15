@@ -71,6 +71,28 @@ tsc --noEmit           # Type check (TypeScript)
 - Never commit secrets, keys, or credentials
 - Use environment variables for configuration
 - Keep dependencies updated for security patches
+- Remove secrets from git history using `git-filter-repo` if accidentally committed
+
+### Git History Management with git-filter-repo
+Use `git-filter-repo` for repository history modifications:
+
+```bash
+# Remove environment files from history
+git filter-repo --path .env --path .env.local --invert-paths
+
+# Replace API keys in all files and commit messages
+git filter-repo --replace-text <(echo 'REACT_APP_API_KEY=abc123==>REACT_APP_API_KEY=xxxxxxxx')
+
+# Update author information across commits
+git filter-repo --mailmap .mailmap
+
+# Standardize commit message format
+git filter-repo --replace-message <(echo 'fixed bug==>fix: resolve bug')
+
+# Restructure monorepo layout
+git filter-repo --path frontend/ --to-subdirectory-filter packages/ui/
+git filter-repo --path backend/ --to-subdirectory-filter packages/api/
+```
 
 ### Workflow
 - Always typecheck after making code changes
