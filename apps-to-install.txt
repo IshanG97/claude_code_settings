@@ -1,0 +1,6 @@
+https://git-scm.com/downloads/win
+https://code.visualstudio.com/Download
+https://visualstudio.microsoft.com/vs/community/
+https://dev.mysql.com/downloads/installer/
+https://chocolatey.org/install
+npm install -g @openai/codex

@@ -27,19 +27,21 @@ if [[ $# -eq 1 && "$1" == "--global" ]]; then
         mkdir -p "$GLOBAL_CLAUDE_DIR"
     fi
 
-    # Backup existing global CLAUDE.md if it exists
-    if [[ -f "$GLOBAL_CLAUDE_DIR/CLAUDE.md" ]]; then
-        echo "💾 Backing up existing global CLAUDE.md..."
-        cp "$GLOBAL_CLAUDE_DIR/CLAUDE.md" "$GLOBAL_CLAUDE_DIR/CLAUDE.md.backup.$(date +%Y%m%d_%H%M%S)"
-    fi
-
     # Copy local CLAUDE.md to global location
     echo "📝 Installing global CLAUDE.md..."
     cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
 
+    # Copy settings.json to global location
+    SETTINGS_FILE="$SCRIPT_DIR/templates/settings.json"
+    if [[ -f "$SETTINGS_FILE" ]]; then
+        echo "⚙️  Installing global settings.json..."
+        cp "$SETTINGS_FILE" "$GLOBAL_CLAUDE_DIR/settings.json"
+    fi
+
     echo ""
     echo "🎉 Global setup complete!"
     echo "📋 Installed: $GLOBAL_CLAUDE_DIR/CLAUDE.md"
+    echo "📋 Installed: $GLOBAL_CLAUDE_DIR/settings.json"
     echo "💡 This configuration will apply to all Claude Code sessions"
     exit 0
 fi

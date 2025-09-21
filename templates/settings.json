@@ -1,8 +1,17 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allowFileAccess": true,
     "allowNetworkAccess": true,
-    "allowShellAccess": true
+    "allowShellAccess": true,
+    "allow": [
+	"Bash(command:*)",
+	"Bash(git diff:*)",
+	"WebSearch",
+	"Read(//Applications/**)",
+	"Bash(brew list:*)",
+	"Read(//usr/local/bin/**)"
+    ]
   },
   "preferences": {
     "autoSave": true,

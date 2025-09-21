@@ -19,7 +19,6 @@ Use these standardized prefixes for all commits:
 - Keep commits atomic and focused on single logical changes
 - Write clear, descriptive messages explaining the "why"
 - Use imperative mood: "Add feature" not "Added feature"
-- Never mention AI assistance in commit messages
 - Retry commits if pre-commit hooks make changes
 
 ## Security Guidelines
