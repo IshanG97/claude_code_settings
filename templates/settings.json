@@ -10,7 +10,9 @@
 	"WebSearch",
 	"Read(//Applications/**)",
 	"Bash(brew list:*)",
-	"Read(//usr/local/bin/**)"
+	"Read(//usr/local/bin/**)",
+  "Bash(adb shell:*)",
+  "Bash(osascript:*)"
     ]
   },
   "preferences": {
