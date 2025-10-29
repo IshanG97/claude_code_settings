@@ -1,9 +1,20 @@
 #!/bin/bash
 
 # Claude Code Configuration Setup
-# Sets up repo-specific CLAUDE.md and settings.json based on language
+# Installs Claude Code CLI and sets up repo-specific CLAUDE.md and settings.json based on language
 
 set -e
+
+# Install Claude Code CLI globally if not already installed
+if ! command -v claude &> /dev/null; then
+    echo "📦 Installing Claude Code CLI globally..."
+    npm install -g @anthropic-ai/claude-code
+    echo "✅ Claude Code CLI installed successfully"
+else
+    echo "✅ Claude Code CLI already installed"
+fi
+
+echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SETTINGS_DIR="$SCRIPT_DIR"
