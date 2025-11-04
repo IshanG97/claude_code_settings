@@ -6,3 +6,4 @@ maximize = true
 macos-non-native-fullscreen = visible-menu
 
 theme = Desert
+keybind = shift+enter=text:\x1b\r
