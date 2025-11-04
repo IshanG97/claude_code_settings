@@ -54,6 +54,7 @@ INSTALL_OBSIDIAN=false
 INSTALL_WHATSAPP=false
 INSTALL_SPOTIFY=false
 INSTALL_LOGI_OPTIONS=false
+INSTALL_CHATGPT=false
 COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
@@ -245,6 +246,15 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         fi
     else
         echo "✅ Logi Options+ already installed"
+    fi
+
+    # Check ChatGPT
+    if ! ls /Applications/ 2>/dev/null | grep -qi "chatgpt"; then
+        if prompt_yes_no "🤖 Install ChatGPT?"; then
+            INSTALL_CHATGPT=true
+        fi
+    else
+        echo "✅ ChatGPT already installed"
     fi
 
     # Check Visual Studio Code
@@ -590,6 +600,13 @@ if [[ "$INSTALL_LOGI_OPTIONS" == true ]]; then
     echo "✅ Logi Options+ installed"
 fi
 
+# ChatGPT
+if [[ "$INSTALL_CHATGPT" == true ]]; then
+    echo "🤖 Installing ChatGPT..."
+    brew install --cask chatgpt
+    echo "✅ ChatGPT installed"
+fi
+
 # Verify installations
 echo ""
 echo "🔍 Current installation status:"
@@ -628,6 +645,7 @@ ls /Applications/ 2>/dev/null | grep -qi "obsidian" && echo "✅ Obsidian: Insta
 ls /Applications/ 2>/dev/null | grep -qi "whatsapp" && echo "✅ WhatsApp: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "spotify" && echo "✅ Spotify: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "logi options" && echo "✅ Logi Options+: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "chatgpt" && echo "✅ ChatGPT: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "visual studio code" && echo "✅ VS Code: Installed"
 command -v code >/dev/null && echo "✅ VS Code CLI: Available"
 
