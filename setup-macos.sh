@@ -44,6 +44,17 @@ INSTALL_PYENV=false
 INSTALL_PYTHON=false
 INSTALL_LUNAR=false
 INSTALL_MACCY=false
+INSTALL_GHOSTTY=false
+INSTALL_RECTANGLE=false
+INSTALL_GOOGLE_CHROME=false
+INSTALL_PLEX=false
+INSTALL_GOOGLE_DRIVE=false
+INSTALL_TRANSMISSION=false
+INSTALL_OBSIDIAN=false
+INSTALL_WHATSAPP=false
+INSTALL_SPOTIFY=false
+INSTALL_LOGI_OPTIONS=false
+COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
 if ! xcode-select -p &>/dev/null; then
@@ -132,6 +143,108 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         fi
     else
         echo "✅ Maccy already installed"
+    fi
+
+    # Check Ghostty
+    if ! ls /Applications/ 2>/dev/null | grep -qi "ghostty"; then
+        if prompt_yes_no "👻 Install Ghostty (terminal emulator)?"; then
+            INSTALL_GHOSTTY=true
+            # Ask about config if installing Ghostty
+            if [ -f ".config/ghostty/config" ]; then
+                if prompt_yes_no "   Copy Ghostty config from dotfiles to ~/.config/ghostty?"; then
+                    COPY_GHOSTTY_CONFIG=true
+                fi
+            fi
+        fi
+    else
+        echo "✅ Ghostty already installed"
+        # Ask about config if Ghostty exists
+        if [ -f ".config/ghostty/config" ]; then
+            if prompt_yes_no "👻 Copy Ghostty config from dotfiles to ~/.config/ghostty?"; then
+                COPY_GHOSTTY_CONFIG=true
+            fi
+        fi
+    fi
+
+    # Check Rectangle
+    if ! ls /Applications/ 2>/dev/null | grep -qi "rectangle"; then
+        if prompt_yes_no "🪟 Install Rectangle (window management)?"; then
+            INSTALL_RECTANGLE=true
+        fi
+    else
+        echo "✅ Rectangle already installed"
+    fi
+
+    # Check Google Chrome
+    if ! ls /Applications/ 2>/dev/null | grep -qi "google chrome"; then
+        if prompt_yes_no "🌐 Install Google Chrome?"; then
+            INSTALL_GOOGLE_CHROME=true
+        fi
+    else
+        echo "✅ Google Chrome already installed"
+    fi
+
+    # Check Plex Media Server
+    if ! ls /Applications/ 2>/dev/null | grep -qi "plex"; then
+        if prompt_yes_no "🎬 Install Plex Media Server?"; then
+            INSTALL_PLEX=true
+        fi
+    else
+        echo "✅ Plex Media Server already installed"
+    fi
+
+    # Check Google Drive
+    if ! ls /Applications/ 2>/dev/null | grep -qi "google drive"; then
+        if prompt_yes_no "☁️  Install Google Drive?"; then
+            INSTALL_GOOGLE_DRIVE=true
+        fi
+    else
+        echo "✅ Google Drive already installed"
+    fi
+
+    # Check Transmission
+    if ! ls /Applications/ 2>/dev/null | grep -qi "transmission"; then
+        if prompt_yes_no "📥 Install Transmission (BitTorrent client)?"; then
+            INSTALL_TRANSMISSION=true
+        fi
+    else
+        echo "✅ Transmission already installed"
+    fi
+
+    # Check Obsidian
+    if ! ls /Applications/ 2>/dev/null | grep -qi "obsidian"; then
+        if prompt_yes_no "📝 Install Obsidian (note-taking app)?"; then
+            INSTALL_OBSIDIAN=true
+        fi
+    else
+        echo "✅ Obsidian already installed"
+    fi
+
+    # Check WhatsApp
+    if ! ls /Applications/ 2>/dev/null | grep -qi "whatsapp"; then
+        if prompt_yes_no "💬 Install WhatsApp?"; then
+            INSTALL_WHATSAPP=true
+        fi
+    else
+        echo "✅ WhatsApp already installed"
+    fi
+
+    # Check Spotify
+    if ! ls /Applications/ 2>/dev/null | grep -qi "spotify"; then
+        if prompt_yes_no "🎵 Install Spotify?"; then
+            INSTALL_SPOTIFY=true
+        fi
+    else
+        echo "✅ Spotify already installed"
+    fi
+
+    # Check Logi Options+
+    if ! ls /Applications/ 2>/dev/null | grep -qi "logi options"; then
+        if prompt_yes_no "🖱️  Install Logi Options+ (Logitech device manager)?"; then
+            INSTALL_LOGI_OPTIONS=true
+        fi
+    else
+        echo "✅ Logi Options+ already installed"
     fi
 
     # Check Visual Studio Code
@@ -389,6 +502,94 @@ if [[ "$INSTALL_VSCODE_CLI" == true ]]; then
     echo "✅ VS Code CLI installed"
 fi
 
+# Ghostty
+if [[ "$INSTALL_GHOSTTY" == true ]]; then
+    echo "👻 Installing Ghostty..."
+    brew install --cask ghostty
+    echo "✅ Ghostty installed"
+fi
+
+# Copy Ghostty config
+if [[ "$COPY_GHOSTTY_CONFIG" == true ]]; then
+    echo "👻 Copying Ghostty config..."
+    # Get the directory where this script is located (dotfiles repo)
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    # Create ~/.config/ghostty directory if it doesn't exist
+    mkdir -p ~/.config/ghostty
+
+    # Copy the config file
+    if [ -f "$SCRIPT_DIR/.config/ghostty/config" ]; then
+        cp "$SCRIPT_DIR/.config/ghostty/config" ~/.config/ghostty/config
+        echo "✅ Ghostty config copied to ~/.config/ghostty/config"
+    else
+        echo "⚠️  Ghostty config file not found in dotfiles"
+    fi
+fi
+
+# Rectangle
+if [[ "$INSTALL_RECTANGLE" == true ]]; then
+    echo "🪟 Installing Rectangle..."
+    brew install --cask rectangle
+    echo "✅ Rectangle installed"
+fi
+
+# Google Chrome
+if [[ "$INSTALL_GOOGLE_CHROME" == true ]]; then
+    echo "🌐 Installing Google Chrome..."
+    brew install --cask google-chrome
+    echo "✅ Google Chrome installed"
+fi
+
+# Plex Media Server
+if [[ "$INSTALL_PLEX" == true ]]; then
+    echo "🎬 Installing Plex Media Server..."
+    brew install --cask plex-media-server
+    echo "✅ Plex Media Server installed"
+fi
+
+# Google Drive
+if [[ "$INSTALL_GOOGLE_DRIVE" == true ]]; then
+    echo "☁️  Installing Google Drive..."
+    brew install --cask google-drive
+    echo "✅ Google Drive installed"
+fi
+
+# Transmission
+if [[ "$INSTALL_TRANSMISSION" == true ]]; then
+    echo "📥 Installing Transmission (BitTorrent client)..."
+    brew install --cask transmission
+    echo "✅ Transmission installed"
+fi
+
+# Obsidian
+if [[ "$INSTALL_OBSIDIAN" == true ]]; then
+    echo "📝 Installing Obsidian..."
+    brew install --cask obsidian
+    echo "✅ Obsidian installed"
+fi
+
+# WhatsApp
+if [[ "$INSTALL_WHATSAPP" == true ]]; then
+    echo "💬 Installing WhatsApp..."
+    brew install --cask whatsapp
+    echo "✅ WhatsApp installed"
+fi
+
+# Spotify
+if [[ "$INSTALL_SPOTIFY" == true ]]; then
+    echo "🎵 Installing Spotify..."
+    brew install --cask spotify
+    echo "✅ Spotify installed"
+fi
+
+# Logi Options+
+if [[ "$INSTALL_LOGI_OPTIONS" == true ]]; then
+    echo "🖱️  Installing Logi Options+..."
+    brew install --cask logi-options+
+    echo "✅ Logi Options+ installed"
+fi
+
 # Verify installations
 echo ""
 echo "🔍 Current installation status:"
@@ -417,6 +618,16 @@ command -v npm >/dev/null && echo "✅ npm: $(npm --version)"
 ls /Applications/ 2>/dev/null | grep -qi "brave" && echo "✅ Brave Browser: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "lunar" && echo "✅ Lunar: Installed"
 command -v maccy >/dev/null && echo "✅ Maccy: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "ghostty" && echo "✅ Ghostty: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "rectangle" && echo "✅ Rectangle: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "google chrome" && echo "✅ Google Chrome: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "plex" && echo "✅ Plex Media Server: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "google drive" && echo "✅ Google Drive: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "transmission" && echo "✅ Transmission: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "obsidian" && echo "✅ Obsidian: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "whatsapp" && echo "✅ WhatsApp: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "spotify" && echo "✅ Spotify: Installed"
+ls /Applications/ 2>/dev/null | grep -qi "logi options" && echo "✅ Logi Options+: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "visual studio code" && echo "✅ VS Code: Installed"
 command -v code >/dev/null && echo "✅ VS Code CLI: Available"
 
