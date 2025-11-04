@@ -39,6 +39,7 @@ INSTALL_VSCODE=false
 INSTALL_VSCODE_CLI=false
 INSTALL_NVM=false
 INSTALL_NODE=false
+INSTALL_NPM_PACKAGES=false
 INSTALL_PYENV=false
 INSTALL_PYTHON=false
 INSTALL_LUNAR=false
@@ -173,6 +174,10 @@ if ! command -v nvm &>/dev/null; then
         # Ask about Node.js if installing NVM
         if prompt_yes_no "   Install Node.js LTS via NVM?"; then
             INSTALL_NODE=true
+            # Ask about global npm packages if installing Node.js
+            if prompt_yes_no "   Install global npm packages (@openai/codex)?"; then
+                INSTALL_NPM_PACKAGES=true
+            fi
         fi
     fi
 else
@@ -181,9 +186,17 @@ else
     if ! command -v node &>/dev/null; then
         if prompt_yes_no "📦 Install Node.js LTS via NVM?"; then
             INSTALL_NODE=true
+            # Ask about global npm packages if installing Node.js
+            if prompt_yes_no "   Install global npm packages (@openai/codex)?"; then
+                INSTALL_NPM_PACKAGES=true
+            fi
         fi
     else
         echo "✅ Node.js already installed"
+        # Ask about global npm packages if Node exists
+        if prompt_yes_no "📦 Install global npm packages (@openai/codex)?"; then
+            INSTALL_NPM_PACKAGES=true
+        fi
     fi
 fi
 
@@ -323,6 +336,17 @@ if [[ "$INSTALL_NODE" == true ]]; then
     nvm alias default node
     echo "✅ Node.js installed: $(node --version)"
     echo "✅ npm installed: $(npm --version)"
+fi
+
+# Install global npm packages
+if [[ "$INSTALL_NPM_PACKAGES" == true ]]; then
+    # Ensure NVM is loaded
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    echo "📦 Installing global npm packages..."
+    npm install -g @openai/codex
+    echo "✅ Global npm packages installed"
 fi
 
 # Install applications via Homebrew Cask

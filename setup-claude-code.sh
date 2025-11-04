@@ -24,7 +24,7 @@ if [[ $# -eq 1 && "$1" == "--global" ]]; then
     echo "🌍 Setting up Global Claude Code configuration..."
 
     GLOBAL_CLAUDE_DIR="$HOME/.claude"
-    SOURCE_FILE="$SCRIPT_DIR/CLAUDE.md"
+    SOURCE_FILE="$SCRIPT_DIR/claude_templates/CLAUDE.md"
 
     # Validate source file exists
     if [[ ! -f "$SOURCE_FILE" ]]; then
@@ -43,7 +43,7 @@ if [[ $# -eq 1 && "$1" == "--global" ]]; then
     cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
 
     # Copy settings.json to global location
-    SETTINGS_FILE="$SCRIPT_DIR/templates/settings.json"
+    SETTINGS_FILE="$SCRIPT_DIR/claude_templates/settings.json"
     if [[ -f "$SETTINGS_FILE" ]]; then
         echo "⚙️  Installing global settings.json..."
         cp "$SETTINGS_FILE" "$GLOBAL_CLAUDE_DIR/settings.json"
@@ -111,7 +111,7 @@ fi
 
 # Copy language-specific CLAUDE.md template
 echo "📝 Installing $PROJECT_TYPE-specific CLAUDE.md..."
-cp "$SETTINGS_DIR/templates/$PROJECT_TYPE/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
+cp "$SETTINGS_DIR/claude_templates/$PROJECT_TYPE/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
 
 # Backup existing repo settings if they exist
 if [[ -f "$REPO_CLAUDE_DIR/settings.json" ]]; then
@@ -121,7 +121,7 @@ fi
 
 # Copy generic repo settings
 echo "⚙️  Installing generic repo settings..."
-cp "$SETTINGS_DIR/templates/settings.json" "$REPO_CLAUDE_DIR/settings.json"
+cp "$SETTINGS_DIR/claude_templates/settings.json" "$REPO_CLAUDE_DIR/settings.json"
 
 echo ""
 echo "🎉 Setup complete!"
