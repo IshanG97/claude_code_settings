@@ -88,7 +88,6 @@ $INSTALL_PLEX = $false
 $INSTALL_GOOGLE_DRIVE = $false
 $INSTALL_QBITTORRENT = $false
 $INSTALL_OBSIDIAN = $false
-$INSTALL_SPOTIFY = $false
 $INSTALL_LOGI_OPTIONS = $false
 $PYTHON_VERSION = ""
 
@@ -252,14 +251,6 @@ if (-not (Test-WingetPackage "Obsidian.Obsidian")) {
     Write-Host "[OK] Obsidian already installed" -ForegroundColor Green
 }
 
-if (-not (Test-WingetPackage "Spotify.Spotify")) {
-    if (Prompt-YesNo "[SPOT] Install Spotify?") {
-        $INSTALL_SPOTIFY = $true
-    }
-} else {
-    Write-Host "[OK] Spotify already installed" -ForegroundColor Green
-}
-
 if (-not (Test-WingetPackage "Logitech.OptionsPlus")) {
     if (Prompt-YesNo "[LOGI] Install Logi Options+ (Logitech device manager)?") {
         $INSTALL_LOGI_OPTIONS = $true
@@ -282,15 +273,11 @@ Write-Host ""
 
 # Install Winget (if needed)
 if ($INSTALL_WINGET) {
-    Write-Host "[PKG] Installing Winget..." -ForegroundColor Yellow
-    try {
-        # Try to install via Microsoft Store
-        Start-Process "ms-windows-store://pdp/?productid=9NBLGGH4NNS1" -Wait
-        Write-Host "[~] Please install 'App Installer' from Microsoft Store and run this script again" -ForegroundColor Yellow
-        exit 0
-    } catch {
-        Write-Host "[X] Could not open Microsoft Store. Please install Winget manually." -ForegroundColor Red
-    }
+    Write-Host "[PKG] Winget installation required..." -ForegroundColor Yellow
+    Write-Host "[!] Please install 'App Installer' from Microsoft Store to get Winget" -ForegroundColor Yellow
+    Write-Host "[!] Visit: https://apps.microsoft.com/detail/9NBLGGH4NNS1" -ForegroundColor Cyan
+    Write-Host "[!] After installation, run this script again" -ForegroundColor Yellow
+    exit 0
 }
 
 # Install Git
@@ -384,7 +371,6 @@ $apps = @(
     @{Flag = $INSTALL_GOOGLE_DRIVE; Name = "Google Drive"; Id = "Google.GoogleDrive"; Emoji = "[DRIVE]"},
     @{Flag = $INSTALL_QBITTORRENT; Name = "qBittorrent"; Id = "qBittorrent.qBittorrent"; Emoji = "[QBIT]"},
     @{Flag = $INSTALL_OBSIDIAN; Name = "Obsidian"; Id = "Obsidian.Obsidian"; Emoji = "[OBS]"},
-    @{Flag = $INSTALL_SPOTIFY; Name = "Spotify"; Id = "Spotify.Spotify"; Emoji = "[SPOT]"},
     @{Flag = $INSTALL_LOGI_OPTIONS; Name = "Logi Options+"; Id = "Logitech.OptionsPlus"; Emoji = "[LOGI]"},
     @{Flag = $INSTALL_VSCODE; Name = "Visual Studio Code"; Id = "Microsoft.VisualStudioCode"; Emoji = "[CODE]"}
 )
@@ -392,8 +378,15 @@ $apps = @(
 foreach ($app in $apps) {
     if ($app.Flag) {
         Write-Host "$($app.Emoji) Installing $($app.Name)..." -ForegroundColor Yellow
-        winget install --id=$($app.Id) -e
-        Write-Host "[OK] $($app.Name) installed" -ForegroundColor Green
+        $result = winget install -e --id $($app.Id) 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "[OK] $($app.Name) installed" -ForegroundColor Green
+        } else {
+            Write-Host "[!] $($app.Name) installation had issues (exit code: $LASTEXITCODE)" -ForegroundColor Yellow
+            if ($result -match "administrator context") {
+                Write-Host "    Note: $($app.Name) cannot be installed in administrator mode" -ForegroundColor Yellow
+            }
+        }
     }
 }
 

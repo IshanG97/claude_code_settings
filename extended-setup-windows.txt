@@ -1,2 +1,3 @@
 https://visualstudio.microsoft.com/vs/community/
 https://dev.mysql.com/downloads/installer/
+https://www.spotify.com/download/windows/
