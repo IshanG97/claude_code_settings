@@ -1,0 +1,2 @@
+https://visualstudio.microsoft.com/vs/community/
+https://dev.mysql.com/downloads/installer/
