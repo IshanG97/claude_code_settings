@@ -65,7 +65,6 @@ if ($ProjectDirectory -and $Language) {
 # Interactive mode setup
 if ($SetupMode -eq "interactive") {
     $INSTALL_CLAUDE_CLI = $false
-    $INSTALL_CODEX = $false
     $SETUP_GLOBAL_CLAUDE = $false
     $SETUP_REPO_CLAUDE = $false
 
@@ -80,20 +79,6 @@ if ($SetupMode -eq "interactive") {
             Write-Host "[OK] Claude Code CLI already installed: $version" -ForegroundColor Green
         } catch {
             Write-Host "[OK] Claude Code CLI already installed" -ForegroundColor Green
-        }
-    }
-
-    # Check if @openai/codex is installed
-    if (-not (Test-Command "npm")) {
-        Write-Host "[!] npm not found. Cannot install @openai/codex" -ForegroundColor Yellow
-    } else {
-        $codexInstalled = npm list -g @openai/codex 2>$null
-        if (-not $codexInstalled -or $LASTEXITCODE -ne 0) {
-            if (Prompt-YesNo "[PKG] Install @openai/codex globally?") {
-                $INSTALL_CODEX = $true
-            }
-        } else {
-            Write-Host "[OK] @openai/codex already installed" -ForegroundColor Green
         }
     }
 
@@ -183,13 +168,6 @@ if ($INSTALL_CLAUDE_CLI) {
 
     npm install -g @anthropic-ai/claude-code
     Write-Host "[OK] Claude Code CLI installed" -ForegroundColor Green
-}
-
-# Install @openai/codex
-if ($INSTALL_CODEX) {
-    Write-Host "[PKG] Installing @openai/codex..." -ForegroundColor Yellow
-    npm install -g @openai/codex
-    Write-Host "[OK] @openai/codex installed" -ForegroundColor Green
 }
 
 # Setup global CLAUDE.md configuration

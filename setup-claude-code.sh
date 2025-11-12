@@ -57,7 +57,6 @@ echo ""
 # Interactive mode setup
 if [[ "$SETUP_MODE" == "interactive" ]]; then
     INSTALL_CLAUDE_CLI=false
-    INSTALL_CODEX=false
     SETUP_GLOBAL_CLAUDE=false
     SETUP_REPO_CLAUDE=false
 
@@ -68,17 +67,6 @@ if [[ "$SETUP_MODE" == "interactive" ]]; then
         fi
     else
         echo "✅ Claude Code CLI already installed: $(claude --version)"
-    fi
-
-    # Check if @openai/codex is installed
-    if ! command -v npm &>/dev/null; then
-        echo "⚠️  npm not found. Cannot install @openai/codex"
-    elif ! npm list -g @openai/codex &>/dev/null; then
-        if prompt_yes_no "📦 Install @openai/codex globally?"; then
-            INSTALL_CODEX=true
-        fi
-    else
-        echo "✅ @openai/codex already installed"
     fi
 
     # Check global CLAUDE.md
@@ -165,18 +153,6 @@ if [[ "$INSTALL_CLAUDE_CLI" == true ]]; then
 
     npm install -g @anthropic-ai/claude-code
     echo "✅ Claude Code CLI installed"
-fi
-
-# Install @openai/codex
-if [[ "$INSTALL_CODEX" == true ]]; then
-    echo "📦 Installing @openai/codex..."
-
-    # Ensure NVM is loaded if available
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    npm install -g @openai/codex
-    echo "✅ @openai/codex installed"
 fi
 
 # Setup global CLAUDE.md configuration
