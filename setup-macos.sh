@@ -333,9 +333,19 @@ else
         fi
     else
         echo "✅ Node.js already installed"
-        # Ask about global npm packages if Node exists
-        if prompt_yes_no "📦 Install global npm packages (@openai/codex)?"; then
-            INSTALL_NPM_PACKAGES=true
+        # Check npm separately
+        if ! command -v npm &>/dev/null; then
+            echo "⚠️  npm not found (this is unusual - npm usually comes with Node.js)"
+            if prompt_yes_no "📦 Reinstall Node.js to get npm?"; then
+                INSTALL_NODE=true
+                INSTALL_NPM_PACKAGES=false
+            fi
+        else
+            echo "✅ npm already installed"
+            # Ask about global npm packages if npm exists
+            if prompt_yes_no "📦 Install global npm packages (@openai/codex)?"; then
+                INSTALL_NPM_PACKAGES=true
+            fi
         fi
     fi
 fi
