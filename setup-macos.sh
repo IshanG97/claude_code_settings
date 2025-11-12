@@ -56,6 +56,8 @@ INSTALL_SPOTIFY=false
 INSTALL_LOGI_OPTIONS=false
 INSTALL_CHATGPT=false
 INSTALL_ADB=false
+INSTALL_CLAUDE_CODE=false
+SETUP_GLOBAL_CLAUDE=false
 COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
@@ -333,6 +335,25 @@ else
     fi
 fi
 
+# Check Claude Code CLI
+if ! command -v claude &>/dev/null; then
+    if prompt_yes_no "🤖 Install Claude Code CLI?"; then
+        INSTALL_CLAUDE_CODE=true
+        if prompt_yes_no "   Setup global CLAUDE.md configuration?"; then
+            SETUP_GLOBAL_CLAUDE=true
+        fi
+    fi
+else
+    echo "✅ Claude Code CLI already installed"
+    if [[ ! -f "$HOME/.claude/CLAUDE.md" ]]; then
+        if prompt_yes_no "🤖 Setup global CLAUDE.md configuration?"; then
+            SETUP_GLOBAL_CLAUDE=true
+        fi
+    else
+        echo "✅ Global CLAUDE.md already configured"
+    fi
+fi
+
 echo ""
 echo "🚦 Starting installation based on your choices..."
 echo ""
@@ -480,6 +501,51 @@ if [[ "$INSTALL_NPM_PACKAGES" == true ]]; then
     echo "📦 Installing global npm packages..."
     npm install -g @openai/codex
     echo "✅ Global npm packages installed"
+fi
+
+# Install Claude Code CLI
+if [[ "$INSTALL_CLAUDE_CODE" == true ]]; then
+    # Ensure NVM is loaded
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    echo "🤖 Installing Claude Code CLI..."
+    npm install -g @anthropic-ai/claude-code
+    echo "✅ Claude Code CLI installed"
+fi
+
+# Setup global CLAUDE.md configuration
+if [[ "$SETUP_GLOBAL_CLAUDE" == true ]]; then
+    echo "🤖 Setting up global CLAUDE.md configuration..."
+
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    GLOBAL_CLAUDE_DIR="$HOME/.claude"
+    SOURCE_FILE="$SCRIPT_DIR/claude_templates/CLAUDE.md"
+
+    # Create global .claude directory if it doesn't exist
+    if [[ ! -d "$GLOBAL_CLAUDE_DIR" ]]; then
+        mkdir -p "$GLOBAL_CLAUDE_DIR"
+    fi
+
+    # Backup existing CLAUDE.md if it exists
+    if [[ -f "$GLOBAL_CLAUDE_DIR/CLAUDE.md" ]]; then
+        echo "💾 Backing up existing global CLAUDE.md..."
+        cp "$GLOBAL_CLAUDE_DIR/CLAUDE.md" "$GLOBAL_CLAUDE_DIR/CLAUDE.md.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+
+    # Copy global CLAUDE.md
+    cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
+
+    # Copy settings.json if it doesn't exist
+    if [[ ! -f "$GLOBAL_CLAUDE_DIR/settings.json" ]]; then
+        SETTINGS_FILE="$SCRIPT_DIR/claude_templates/settings.json"
+        if [[ -f "$SETTINGS_FILE" ]]; then
+            cp "$SETTINGS_FILE" "$GLOBAL_CLAUDE_DIR/settings.json"
+        fi
+    fi
+
+    echo "✅ Global CLAUDE.md configuration installed"
+    echo "   Location: $GLOBAL_CLAUDE_DIR/CLAUDE.md"
 fi
 
 # Install applications via Homebrew Cask
@@ -648,6 +714,10 @@ export NVM_DIR="$HOME/.nvm"
 command -v nvm >/dev/null && echo "✅ NVM: $(nvm --version)"
 command -v node >/dev/null && echo "✅ Node.js: $(node --version)"
 command -v npm >/dev/null && echo "✅ npm: $(npm --version)"
+
+# Check Claude Code CLI
+command -v claude >/dev/null && echo "✅ Claude Code CLI: $(claude --version)"
+[[ -f "$HOME/.claude/CLAUDE.md" ]] && echo "✅ Global CLAUDE.md: Configured"
 
 ls /Applications/ 2>/dev/null | grep -qi "brave" && echo "✅ Brave Browser: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "lunar" && echo "✅ Lunar: Installed"

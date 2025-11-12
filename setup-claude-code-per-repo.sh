@@ -1,66 +1,17 @@
 #!/bin/bash
 
-# Claude Code Configuration Setup
-# Installs Claude Code CLI and sets up repo-specific CLAUDE.md and settings.json based on language
+# Claude Code Per-Repo Configuration Setup
+# Sets up repo-specific CLAUDE.md and settings.json based on language
+# Note: Run setup-macos.sh or setup-windows.ps1 first to install Claude Code CLI globally
 
 set -e
-
-# Install Claude Code CLI globally if not already installed
-if ! command -v claude &> /dev/null; then
-    echo "📦 Installing Claude Code CLI globally..."
-    npm install -g @anthropic-ai/claude-code
-    echo "✅ Claude Code CLI installed successfully"
-else
-    echo "✅ Claude Code CLI already installed"
-fi
-
-echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SETTINGS_DIR="$SCRIPT_DIR"
 
-# Check if global setup was requested
-if [[ $# -eq 1 && "$1" == "--global" ]]; then
-    echo "🌍 Setting up Global Claude Code configuration..."
-
-    GLOBAL_CLAUDE_DIR="$HOME/.claude"
-    SOURCE_FILE="$SCRIPT_DIR/claude_templates/CLAUDE.md"
-
-    # Validate source file exists
-    if [[ ! -f "$SOURCE_FILE" ]]; then
-        echo "❌ Source file not found: $SOURCE_FILE"
-        exit 1
-    fi
-
-    # Create global .claude directory if it doesn't exist
-    if [[ ! -d "$GLOBAL_CLAUDE_DIR" ]]; then
-        echo "📁 Creating global .claude directory..."
-        mkdir -p "$GLOBAL_CLAUDE_DIR"
-    fi
-
-    # Copy local CLAUDE.md to global location
-    echo "📝 Installing global CLAUDE.md..."
-    cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
-
-    # Copy settings.json to global location
-    SETTINGS_FILE="$SCRIPT_DIR/claude_templates/settings.json"
-    if [[ -f "$SETTINGS_FILE" ]]; then
-        echo "⚙️  Installing global settings.json..."
-        cp "$SETTINGS_FILE" "$GLOBAL_CLAUDE_DIR/settings.json"
-    fi
-
-    echo ""
-    echo "🎉 Global setup complete!"
-    echo "📋 Installed: $GLOBAL_CLAUDE_DIR/CLAUDE.md"
-    echo "📋 Installed: $GLOBAL_CLAUDE_DIR/settings.json"
-    echo "💡 This configuration will apply to all Claude Code sessions"
-    exit 0
-fi
-
-# Check if required arguments were provided for project setup
+# Check if required arguments were provided
 if [[ $# -ne 2 ]]; then
     echo "❌ Usage: $0 <project-directory> <language>"
-    echo "   OR: $0 --global"
     echo ""
     echo "Languages: javascript, python, csharp"
     echo ""
@@ -68,7 +19,8 @@ if [[ $# -ne 2 ]]; then
     echo "  $0 /path/to/my-python-project python"
     echo "  $0 ~/code/my-js-app javascript"
     echo "  $0 ./my-dotnet-api csharp"
-    echo "  $0 --global"
+    echo ""
+    echo "💡 Tip: Run setup-macos.sh first to install Claude Code CLI and global config"
     exit 1
 fi
 
