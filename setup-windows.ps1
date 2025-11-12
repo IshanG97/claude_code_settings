@@ -78,7 +78,6 @@ $INSTALL_BRAVE = $false
 $INSTALL_VSCODE = $false
 $INSTALL_NVM = $false
 $INSTALL_NODE = $false
-$INSTALL_NPM_PACKAGES = $false
 $INSTALL_PYENV = $false
 $INSTALL_PYTHON = $false
 $INSTALL_FLUX = $false
@@ -89,8 +88,6 @@ $INSTALL_GOOGLE_DRIVE = $false
 $INSTALL_QBITTORRENT = $false
 $INSTALL_OBSIDIAN = $false
 $INSTALL_LOGI_OPTIONS = $false
-$INSTALL_CLAUDE_CODE = $false
-$SETUP_GLOBAL_CLAUDE = $false
 $PYTHON_VERSION = ""
 
 # Check Winget
@@ -166,9 +163,6 @@ if (-not (Test-Command "nvm")) {
         $INSTALL_NVM = $true
         if (Prompt-YesNo "   Install Node.js LTS via NVM?") {
             $INSTALL_NODE = $true
-            if (Prompt-YesNo "   Install global npm packages (@openai/codex)?") {
-                $INSTALL_NPM_PACKAGES = $true
-            }
         }
     }
 } else {
@@ -176,15 +170,9 @@ if (-not (Test-Command "nvm")) {
     if (-not (Test-Command "node")) {
         if (Prompt-YesNo "[PKG] Install Node.js LTS via NVM?") {
             $INSTALL_NODE = $true
-            if (Prompt-YesNo "   Install global npm packages (@openai/codex)?") {
-                $INSTALL_NPM_PACKAGES = $true
-            }
         }
     } else {
         Write-Host "[OK] Node.js already installed" -ForegroundColor Green
-        if (Prompt-YesNo "[PKG] Install global npm packages (@openai/codex)?") {
-            $INSTALL_NPM_PACKAGES = $true
-        }
     }
 }
 
@@ -269,25 +257,6 @@ if (-not (Test-WingetPackage "Microsoft.VisualStudioCode")) {
     Write-Host "[OK] Visual Studio Code already installed" -ForegroundColor Green
 }
 
-# Check Claude Code CLI
-if (-not (Test-Command "claude")) {
-    if (Prompt-YesNo "[CLAUDE] Install Claude Code CLI?") {
-        $INSTALL_CLAUDE_CODE = $true
-        if (Prompt-YesNo "   Setup global CLAUDE.md configuration?") {
-            $SETUP_GLOBAL_CLAUDE = $true
-        }
-    }
-} else {
-    Write-Host "[OK] Claude Code CLI already installed" -ForegroundColor Green
-    $GlobalClaudeMd = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
-    if (-not (Test-Path $GlobalClaudeMd)) {
-        if (Prompt-YesNo "[CLAUDE] Setup global CLAUDE.md configuration?") {
-            $SETUP_GLOBAL_CLAUDE = $true
-        }
-    } else {
-        Write-Host "[OK] Global CLAUDE.md already configured" -ForegroundColor Green
-    }
-}
 
 Write-Host ""
 Write-Host "[*] Starting installation based on your choices..." -ForegroundColor Cyan
@@ -377,65 +346,6 @@ if ($INSTALL_NODE) {
     Write-Host "After restart, run: nvm install lts && nvm use lts" -ForegroundColor Cyan
 }
 
-# Install global npm packages (Note: This requires Node.js)
-if ($INSTALL_NPM_PACKAGES) {
-    if (Test-Command "npm") {
-        Write-Host "[PKG] Installing global npm packages..." -ForegroundColor Yellow
-        npm install -g @openai/codex
-        Write-Host "[OK] Global npm packages installed" -ForegroundColor Green
-    } else {
-        Write-Host "[PKG] Global npm packages installation requires Node.js..." -ForegroundColor Yellow
-        Write-Host "After installing Node.js, run: npm install -g @openai/codex" -ForegroundColor Cyan
-    }
-}
-
-# Install Claude Code CLI
-if ($INSTALL_CLAUDE_CODE) {
-    Write-Host "[CLAUDE] Installing Claude Code CLI..." -ForegroundColor Yellow
-    if (Test-Command "npm") {
-        npm install -g @anthropic-ai/claude-code
-        Write-Host "[OK] Claude Code CLI installed" -ForegroundColor Green
-    } else {
-        Write-Host "[!] npm not found. Install Node.js first, then run: npm install -g @anthropic-ai/claude-code" -ForegroundColor Yellow
-    }
-}
-
-# Setup global CLAUDE.md configuration
-if ($SETUP_GLOBAL_CLAUDE) {
-    Write-Host "[CLAUDE] Setting up global CLAUDE.md configuration..." -ForegroundColor Yellow
-
-    $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $GlobalClaudeDir = Join-Path $env:USERPROFILE ".claude"
-    $SourceFile = Join-Path $ScriptDir "claude_templates\CLAUDE.md"
-
-    # Create global .claude directory if it doesn't exist
-    if (-not (Test-Path $GlobalClaudeDir)) {
-        New-Item -ItemType Directory -Path $GlobalClaudeDir -Force | Out-Null
-    }
-
-    # Backup existing CLAUDE.md if it exists
-    $GlobalClaudeMd = Join-Path $GlobalClaudeDir "CLAUDE.md"
-    if (Test-Path $GlobalClaudeMd) {
-        $BackupName = "CLAUDE.md.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-        Write-Host "[!] Backing up existing global CLAUDE.md..." -ForegroundColor Yellow
-        Copy-Item -Path $GlobalClaudeMd -Destination (Join-Path $GlobalClaudeDir $BackupName) -Force
-    }
-
-    # Copy global CLAUDE.md
-    Copy-Item -Path $SourceFile -Destination $GlobalClaudeMd -Force
-
-    # Copy settings.json if it doesn't exist
-    $GlobalSettings = Join-Path $GlobalClaudeDir "settings.json"
-    if (-not (Test-Path $GlobalSettings)) {
-        $SettingsFile = Join-Path $ScriptDir "claude_templates\settings.json"
-        if (Test-Path $SettingsFile) {
-            Copy-Item -Path $SettingsFile -Destination $GlobalSettings -Force
-        }
-    }
-
-    Write-Host "[OK] Global CLAUDE.md configuration installed" -ForegroundColor Green
-    Write-Host "   Location: $GlobalClaudeMd" -ForegroundColor White
-}
 
 # Install applications via Winget
 $apps = @(
@@ -488,15 +398,6 @@ if (Test-Command "pyenv") {
 if (Test-Command "nvm") { Write-Host "[OK] NVM: Available" -ForegroundColor Green }
 if (Test-Command "node") { Write-Host "[OK] Node.js: $((node --version).Trim())" -ForegroundColor Green }
 if (Test-Command "npm") { Write-Host "[OK] npm: $((npm --version).Trim())" -ForegroundColor Green }
-
-# Check Claude Code CLI
-if (Test-Command "claude") {
-    Write-Host "[OK] Claude Code CLI: $((claude --version).Trim())" -ForegroundColor Green
-}
-$GlobalClaudeMd = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
-if (Test-Path $GlobalClaudeMd) {
-    Write-Host "[OK] Global CLAUDE.md: Configured" -ForegroundColor Green
-}
 
 # Check installed applications
 foreach ($app in $apps) {

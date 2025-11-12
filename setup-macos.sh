@@ -39,7 +39,6 @@ INSTALL_VSCODE=false
 INSTALL_VSCODE_CLI=false
 INSTALL_NVM=false
 INSTALL_NODE=false
-INSTALL_NPM_PACKAGES=false
 INSTALL_PYENV=false
 INSTALL_PYTHON=false
 INSTALL_LUNAR=false
@@ -56,8 +55,7 @@ INSTALL_SPOTIFY=false
 INSTALL_LOGI_OPTIONS=false
 INSTALL_CHATGPT=false
 INSTALL_ADB=false
-INSTALL_CLAUDE_CODE=false
-SETUP_GLOBAL_CLAUDE=false
+INSTALL_SCRCPY=false
 COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
@@ -269,6 +267,15 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         echo "✅ Android Platform Tools (ADB) already installed"
     fi
 
+    # Check scrcpy
+    if ! command -v scrcpy &>/dev/null; then
+        if prompt_yes_no "📱 Install scrcpy (screen mirroring for Android)?"; then
+            INSTALL_SCRCPY=true
+        fi
+    else
+        echo "✅ scrcpy already installed"
+    fi
+
     # Check Visual Studio Code
     if ! ls /Applications/ 2>/dev/null | grep -qi "visual studio code"; then
         if prompt_yes_no "💻 Install Visual Studio Code?"; then
@@ -310,10 +317,6 @@ if [[ ! -d "$HOME/.nvm" ]] || [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
         # Ask about Node.js if installing NVM
         if prompt_yes_no "   Install Node.js LTS via NVM?"; then
             INSTALL_NODE=true
-            # Ask about global npm packages if installing Node.js
-            if prompt_yes_no "   Install global npm packages (@openai/codex)?"; then
-                INSTALL_NPM_PACKAGES=true
-            fi
         fi
     fi
 else
@@ -326,10 +329,6 @@ else
     if ! command -v node &>/dev/null; then
         if prompt_yes_no "📦 Install Node.js LTS via NVM?"; then
             INSTALL_NODE=true
-            # Ask about global npm packages if installing Node.js
-            if prompt_yes_no "   Install global npm packages (@openai/codex)?"; then
-                INSTALL_NPM_PACKAGES=true
-            fi
         fi
     else
         echo "✅ Node.js already installed"
@@ -338,36 +337,13 @@ else
             echo "⚠️  npm not found (this is unusual - npm usually comes with Node.js)"
             if prompt_yes_no "📦 Reinstall Node.js to get npm?"; then
                 INSTALL_NODE=true
-                INSTALL_NPM_PACKAGES=false
             fi
         else
             echo "✅ npm already installed"
-            # Ask about global npm packages if npm exists
-            if prompt_yes_no "📦 Install global npm packages (@openai/codex)?"; then
-                INSTALL_NPM_PACKAGES=true
-            fi
         fi
     fi
 fi
 
-# Check Claude Code CLI
-if ! command -v claude &>/dev/null; then
-    if prompt_yes_no "🤖 Install Claude Code CLI?"; then
-        INSTALL_CLAUDE_CODE=true
-        if prompt_yes_no "   Setup global CLAUDE.md configuration?"; then
-            SETUP_GLOBAL_CLAUDE=true
-        fi
-    fi
-else
-    echo "✅ Claude Code CLI already installed"
-    if [[ ! -f "$HOME/.claude/CLAUDE.md" ]]; then
-        if prompt_yes_no "🤖 Setup global CLAUDE.md configuration?"; then
-            SETUP_GLOBAL_CLAUDE=true
-        fi
-    else
-        echo "✅ Global CLAUDE.md already configured"
-    fi
-fi
 
 echo ""
 echo "🚦 Starting installation based on your choices..."
@@ -507,61 +483,7 @@ if [[ "$INSTALL_NODE" == true ]]; then
     echo "✅ npm installed: $(npm --version)"
 fi
 
-# Install global npm packages
-if [[ "$INSTALL_NPM_PACKAGES" == true ]]; then
-    # Ensure NVM is loaded
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    echo "📦 Installing global npm packages..."
-    npm install -g @openai/codex
-    echo "✅ Global npm packages installed"
-fi
-
-# Install Claude Code CLI
-if [[ "$INSTALL_CLAUDE_CODE" == true ]]; then
-    # Ensure NVM is loaded
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    echo "🤖 Installing Claude Code CLI..."
-    npm install -g @anthropic-ai/claude-code
-    echo "✅ Claude Code CLI installed"
-fi
-
-# Setup global CLAUDE.md configuration
-if [[ "$SETUP_GLOBAL_CLAUDE" == true ]]; then
-    echo "🤖 Setting up global CLAUDE.md configuration..."
-
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    GLOBAL_CLAUDE_DIR="$HOME/.claude"
-    SOURCE_FILE="$SCRIPT_DIR/claude_templates/CLAUDE.md"
-
-    # Create global .claude directory if it doesn't exist
-    if [[ ! -d "$GLOBAL_CLAUDE_DIR" ]]; then
-        mkdir -p "$GLOBAL_CLAUDE_DIR"
-    fi
-
-    # Backup existing CLAUDE.md if it exists
-    if [[ -f "$GLOBAL_CLAUDE_DIR/CLAUDE.md" ]]; then
-        echo "💾 Backing up existing global CLAUDE.md..."
-        cp "$GLOBAL_CLAUDE_DIR/CLAUDE.md" "$GLOBAL_CLAUDE_DIR/CLAUDE.md.backup.$(date +%Y%m%d_%H%M%S)"
-    fi
-
-    # Copy global CLAUDE.md
-    cp "$SOURCE_FILE" "$GLOBAL_CLAUDE_DIR/CLAUDE.md"
-
-    # Copy settings.json if it doesn't exist
-    if [[ ! -f "$GLOBAL_CLAUDE_DIR/settings.json" ]]; then
-        SETTINGS_FILE="$SCRIPT_DIR/claude_templates/settings.json"
-        if [[ -f "$SETTINGS_FILE" ]]; then
-            cp "$SETTINGS_FILE" "$GLOBAL_CLAUDE_DIR/settings.json"
-        fi
-    fi
-
-    echo "✅ Global CLAUDE.md configuration installed"
-    echo "   Location: $GLOBAL_CLAUDE_DIR/CLAUDE.md"
-fi
 
 # Install applications via Homebrew Cask
 # Brave Browser
@@ -705,6 +627,13 @@ if [[ "$INSTALL_ADB" == true ]]; then
     echo "✅ Android Platform Tools (ADB) installed"
 fi
 
+# scrcpy
+if [[ "$INSTALL_SCRCPY" == true ]]; then
+    echo "📱 Installing scrcpy..."
+    brew install scrcpy
+    echo "✅ scrcpy installed"
+fi
+
 # Verify installations
 echo ""
 echo "🔍 Current installation status:"
@@ -730,10 +659,6 @@ command -v nvm >/dev/null && echo "✅ NVM: $(nvm --version)"
 command -v node >/dev/null && echo "✅ Node.js: $(node --version)"
 command -v npm >/dev/null && echo "✅ npm: $(npm --version)"
 
-# Check Claude Code CLI
-command -v claude >/dev/null && echo "✅ Claude Code CLI: $(claude --version)"
-[[ -f "$HOME/.claude/CLAUDE.md" ]] && echo "✅ Global CLAUDE.md: Configured"
-
 ls /Applications/ 2>/dev/null | grep -qi "brave" && echo "✅ Brave Browser: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "lunar" && echo "✅ Lunar: Installed"
 command -v maccy >/dev/null && echo "✅ Maccy: Installed"
@@ -749,6 +674,7 @@ ls /Applications/ 2>/dev/null | grep -qi "spotify" && echo "✅ Spotify: Install
 ls /Applications/ 2>/dev/null | grep -qi "logi options" && echo "✅ Logi Options+: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "chatgpt" && echo "✅ ChatGPT: Installed"
 command -v adb >/dev/null && echo "✅ Android Platform Tools (ADB): $(adb --version | head -n1)"
+command -v scrcpy >/dev/null && echo "✅ scrcpy: $(scrcpy --version 2>&1 | head -n1)"
 ls /Applications/ 2>/dev/null | grep -qi "visual studio code" && echo "✅ VS Code: Installed"
 command -v code >/dev/null && echo "✅ VS Code CLI: Available"
 
