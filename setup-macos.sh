@@ -55,6 +55,7 @@ INSTALL_WHATSAPP=false
 INSTALL_SPOTIFY=false
 INSTALL_LOGI_OPTIONS=false
 INSTALL_CHATGPT=false
+INSTALL_ADB=false
 COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
@@ -255,6 +256,15 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         fi
     else
         echo "✅ ChatGPT already installed"
+    fi
+
+    # Check Android Platform Tools (ADB)
+    if ! command -v adb &>/dev/null; then
+        if prompt_yes_no "📱 Install Android Platform Tools (ADB)?"; then
+            INSTALL_ADB=true
+        fi
+    else
+        echo "✅ Android Platform Tools (ADB) already installed"
     fi
 
     # Check Visual Studio Code
@@ -607,6 +617,13 @@ if [[ "$INSTALL_CHATGPT" == true ]]; then
     echo "✅ ChatGPT installed"
 fi
 
+# Android Platform Tools (ADB)
+if [[ "$INSTALL_ADB" == true ]]; then
+    echo "📱 Installing Android Platform Tools (ADB)..."
+    brew install android-platform-tools
+    echo "✅ Android Platform Tools (ADB) installed"
+fi
+
 # Verify installations
 echo ""
 echo "🔍 Current installation status:"
@@ -646,6 +663,7 @@ ls /Applications/ 2>/dev/null | grep -qi "whatsapp" && echo "✅ WhatsApp: Insta
 ls /Applications/ 2>/dev/null | grep -qi "spotify" && echo "✅ Spotify: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "logi options" && echo "✅ Logi Options+: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "chatgpt" && echo "✅ ChatGPT: Installed"
+command -v adb >/dev/null && echo "✅ Android Platform Tools (ADB): $(adb --version | head -n1)"
 ls /Applications/ 2>/dev/null | grep -qi "visual studio code" && echo "✅ VS Code: Installed"
 command -v code >/dev/null && echo "✅ VS Code CLI: Available"
 
