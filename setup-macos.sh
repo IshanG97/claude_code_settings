@@ -303,7 +303,8 @@ else
 fi
 
 # Check NVM (not dependent on Homebrew)
-if ! command -v nvm &>/dev/null; then
+# NVM is a shell function, so we check for the directory and script file
+if [[ ! -d "$HOME/.nvm" ]] || [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
     if prompt_yes_no "📦 Install NVM (Node Version Manager)?"; then
         INSTALL_NVM=true
         # Ask about Node.js if installing NVM
@@ -317,6 +318,10 @@ if ! command -v nvm &>/dev/null; then
     fi
 else
     echo "✅ NVM already installed"
+    # Load NVM to check for Node
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
     # Ask about Node.js if NVM exists but Node doesn't
     if ! command -v node &>/dev/null; then
         if prompt_yes_no "📦 Install Node.js LTS via NVM?"; then

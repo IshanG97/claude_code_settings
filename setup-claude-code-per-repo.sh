@@ -75,6 +75,13 @@ fi
 echo "⚙️  Installing generic repo settings..."
 cp "$SETTINGS_DIR/claude_templates/settings.json" "$REPO_CLAUDE_DIR/settings.json"
 
+# Install @openai/codex if npm is available
+if command -v npm &>/dev/null; then
+    echo "📦 Installing @openai/codex globally..."
+    npm install -g @openai/codex
+    echo "✅ @openai/codex installed"
+fi
+
 echo ""
 echo "🎉 Setup complete!"
 echo ""

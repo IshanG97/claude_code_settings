@@ -379,8 +379,14 @@ if ($INSTALL_NODE) {
 
 # Install global npm packages (Note: This requires Node.js)
 if ($INSTALL_NPM_PACKAGES) {
-    Write-Host "[PKG] Global npm packages installation requires Node.js..." -ForegroundColor Yellow
-    Write-Host "After installing Node.js, run: npm install -g @openai/codex" -ForegroundColor Cyan
+    if (Test-Command "npm") {
+        Write-Host "[PKG] Installing global npm packages..." -ForegroundColor Yellow
+        npm install -g @openai/codex
+        Write-Host "[OK] Global npm packages installed" -ForegroundColor Green
+    } else {
+        Write-Host "[PKG] Global npm packages installation requires Node.js..." -ForegroundColor Yellow
+        Write-Host "After installing Node.js, run: npm install -g @openai/codex" -ForegroundColor Cyan
+    }
 }
 
 # Install Claude Code CLI

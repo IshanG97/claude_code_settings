@@ -74,6 +74,13 @@ Write-Host "⚙️  Installing generic repo settings..." -ForegroundColor Cyan
 $GenericSettings = Join-Path $SettingsDir "claude_templates\settings.json"
 Copy-Item -Path $GenericSettings -Destination $RepoSettings -Force
 
+# Install @openai/codex if npm is available
+if (Get-Command npm -ErrorAction SilentlyContinue) {
+    Write-Host "[PKG] Installing @openai/codex globally..." -ForegroundColor Yellow
+    npm install -g @openai/codex
+    Write-Host "[OK] @openai/codex installed" -ForegroundColor Green
+}
+
 Write-Host ""
 Write-Host "🎉 Setup complete!" -ForegroundColor Green
 Write-Host ""
