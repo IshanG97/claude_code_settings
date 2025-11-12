@@ -17,7 +17,8 @@ Use these standardized prefixes for all commits:
 
 ### Commit Best Practices
 - Keep commits atomic and focused on single logical changes
-- Write clear, descriptive messages explaining the "why"
+- Write concise, short messages (50 chars or less for subject line)
+- Explain the "why" briefly, not the "what"
 - Use imperative mood: "Add feature" not "Added feature"
 - Retry commits if pre-commit hooks make changes
 
