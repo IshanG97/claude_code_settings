@@ -84,6 +84,7 @@ git filter-repo --path-rename old-folder/:new-folder/
 - Add comments only when necessary for complex logic
 - Prefer composition over inheritance
 - Write self-documenting code
+- Never use emojis in code, comments, or documentation unless explicitly requested
 
 ### Testing Requirements
 - Write tests for new functionality
