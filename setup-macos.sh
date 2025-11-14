@@ -56,6 +56,7 @@ INSTALL_LOGI_OPTIONS=false
 INSTALL_CHATGPT=false
 INSTALL_ADB=false
 INSTALL_SCRCPY=false
+INSTALL_WINDOWS_APP=false
 COPY_GHOSTTY_CONFIG=false
 
 # Check Xcode
@@ -274,6 +275,15 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         fi
     else
         echo "✅ scrcpy already installed"
+    fi
+
+    # Check Windows App
+    if ! ls /Applications/ 2>/dev/null | grep -qi "windows app"; then
+        if prompt_yes_no "🪟 Install Windows App (Microsoft Remote Desktop)?"; then
+            INSTALL_WINDOWS_APP=true
+        fi
+    else
+        echo "✅ Windows App already installed"
     fi
 
     # Check Visual Studio Code
@@ -634,6 +644,13 @@ if [[ "$INSTALL_SCRCPY" == true ]]; then
     echo "✅ scrcpy installed"
 fi
 
+# Windows App
+if [[ "$INSTALL_WINDOWS_APP" == true ]]; then
+    echo "🪟 Installing Windows App..."
+    brew install --cask windows-app
+    echo "✅ Windows App installed"
+fi
+
 # Verify installations
 echo ""
 echo "🔍 Current installation status:"
@@ -675,6 +692,7 @@ ls /Applications/ 2>/dev/null | grep -qi "logi options" && echo "✅ Logi Option
 ls /Applications/ 2>/dev/null | grep -qi "chatgpt" && echo "✅ ChatGPT: Installed"
 command -v adb >/dev/null && echo "✅ Android Platform Tools (ADB): $(adb --version | head -n1)"
 command -v scrcpy >/dev/null && echo "✅ scrcpy: $(scrcpy --version 2>&1 | head -n1)"
+ls /Applications/ 2>/dev/null | grep -qi "windows app" && echo "✅ Windows App: Installed"
 ls /Applications/ 2>/dev/null | grep -qi "visual studio code" && echo "✅ VS Code: Installed"
 command -v code >/dev/null && echo "✅ VS Code CLI: Available"
 
