@@ -34,6 +34,7 @@ INSTALL_HOMEBREW=false
 INSTALL_GIT=false
 INSTALL_UV=false
 INSTALL_GIT_FILTER_REPO=false
+INSTALL_GIT_LFS=false
 INSTALL_BRAVE=false
 INSTALL_VSCODE=false
 INSTALL_VSCODE_CLI=false
@@ -96,6 +97,15 @@ if [[ "$INSTALL_HOMEBREW" == true ]] || command -v brew &>/dev/null; then
         fi
     else
         echo "✅ git-filter-repo already installed"
+    fi
+
+    # Check git-lfs
+    if ! command -v git-lfs &>/dev/null; then
+        if prompt_yes_no "📦 Install git-lfs (Git Large File Storage)?"; then
+            INSTALL_GIT_LFS=true
+        fi
+    else
+        echo "✅ git-lfs already installed"
     fi
 
     # Check pyenv
@@ -427,6 +437,14 @@ if [[ "$INSTALL_GIT_FILTER_REPO" == true ]]; then
     echo "✅ git-filter-repo installed"
 fi
 
+# Install git-lfs
+if [[ "$INSTALL_GIT_LFS" == true ]]; then
+    echo "📦 Installing git-lfs..."
+    brew install git-lfs
+    git lfs install
+    echo "✅ git-lfs installed"
+fi
+
 # Install pyenv
 if [[ "$INSTALL_PYENV" == true ]]; then
     echo "🐍 Installing pyenv..."
@@ -659,6 +677,7 @@ command -v brew >/dev/null && echo "✅ Homebrew: $(brew --version | head -n1)"
 command -v git >/dev/null && echo "✅ Git: $(git --version)"
 command -v uv >/dev/null && echo "✅ uv: $(uv --version)"
 command -v git-filter-repo >/dev/null && echo "✅ git-filter-repo: $(git-filter-repo --version 2>&1 | head -n1)"
+command -v git-lfs >/dev/null && echo "✅ git-lfs: $(git-lfs --version | head -n1)"
 
 # Check pyenv/Python
 export PYENV_ROOT="$HOME/.pyenv"
